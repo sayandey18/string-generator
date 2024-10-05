@@ -1,0 +1,59 @@
+---
+import '@fontsource-variable/dm-sans';
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Generate secure and random 32-bit keys effortlessly with our key generator. Ideal for API tokens, passwords, and secure data encryption" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body class="min-h-screen antialiased bg-jet">
+		<slot />
+	</body>
+</html>
+
+<script>
+    const generateString = (length: number): string => {
+        const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let result = '';
+        for (let i = length; i > 0; --i) {
+            result += chars[Math.floor(Math.random() * chars.length)];
+        }
+        return result;
+    };
+
+    const generatedString = document.getElementById('generated-string') as HTMLElement;
+    generatedString.innerText = generateString(32);
+
+    const newStringBtn = document.getElementById('new-string-btn') as HTMLButtonElement;
+    const copyBtn = document.getElementById('copy-btn') as HTMLSpanElement;
+    const copySuccess = document.getElementById('copy-success') as HTMLDivElement;
+
+    const newString = (): string => {
+        const newValue = generateString(32);
+        generatedString.innerText = newValue;
+        return newValue;
+    }
+
+    newStringBtn.addEventListener('click', newString);
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(generatedString.innerText);
+        copySuccess.classList.add('opacity-1'); // for Safari
+        copySuccess.style.opacity = '1'; // for Firefox/chrome
+        setTimeout(() => {
+            copySuccess.classList.remove('opacity-1');
+            copySuccess.style.opacity = '0';
+        }, 1500);
+    });
+</script>
